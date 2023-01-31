@@ -1,0 +1,17 @@
+$navbar-bg-color: #000000;
+$sidemenu-bg-color: #ffffff;
+$primary-bg-color: #F7F5F4;
+$secondary-bg-color: #CBCBCB;
+$primary-color: #C96340;
+$secondary-color: #9B4A2E;
+$dialog-backdrop-color: #ECC750;
+
+.woosh-bg-primary {
+    background-color: $primary-bg-color !important;
+}
+.woosh-bg-secondary {
+    background-color: $primary-color !important;
+}
+.woosh-text-primary {
+    color: $primary-color;
+}

@@ -1,0 +1,179 @@
+// This file use for Customize style of kendo Component //
+$k-input-height: 2.3rem;
+// $k-input-height: 1.938rem;
+.k-floating-label-container {
+  width: 100%;
+  margin: 0.5rem 0;
+  font-weight: bold;
+}
+.k-combobox {
+  &.mandatory-field {
+    border-width: 1px !important;
+    border-color: red;
+  }
+}
+.k-input {
+  border-width: 0px;
+  height: $k-input-height;
+  //font-weight: bold;
+  &.mandatory-field {
+    border-width: 1px !important;
+    border-style: solid;
+  }
+}
+
+.k-disabled{
+  background-color: #e4e9f0;
+}
+
+.k-dropdownlist {
+  width: 100%;
+  height: $k-input-height;
+  margin: 0.5rem 0;
+  color: #c96340;
+}
+.k-button {
+  border: 0;
+  background-color: $primary-color;
+  padding: 1rem 2.5rem;
+  &.k-button--secondary {
+    background-color: $secondary-bg-color !important;
+  }
+}
+.k-button:hover,
+.k-button:active {
+  background-color: $secondary-color;
+}
+.k-label {
+  color: $primary-color;
+}
+
+// for custumize grid
+.k-widget {
+  border: 0 !important;
+}
+.k-grid {
+  tr th {
+    border: 0 !important;
+  }
+  tr td {
+    border: 0 !important;
+  }
+}
+.k-header {
+  vertical-align: middle !important;
+}
+.k-grid-header {
+  color: $primary-color;
+  font-weight: bold;
+  border: 0 !important;
+  font-size: 0.8rem;
+}
+// for custumize grid align-text Header title
+.k-column-title {
+  width: 100%;
+  white-space: normal !important;
+}
+.k-grid-container {
+  font-size: 0.7rem;
+  td {
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
+  }
+}
+
+// for customize kendo dialog
+.k-overlay {
+  background-color: $dialog-backdrop-color;
+  opacity: 60%;
+}
+
+.k-dialog-wrapper{
+  &.right-position{
+    margin-top: 2rem;
+    align-items: flex-end;
+    padding-right: inherit;
+  }
+}
+
+.k-dialog-titlebar{
+  background-color: #c96340;
+}
+
+.k-window {
+  width: auto;
+  max-width: 50rem;
+  height: auto;
+  max-height: 90%;
+}
+
+.k-window-content,
+.k-prompt-container {
+  border-style: solid;
+  border-width: 1px;
+  border-color: $primary-color;
+  padding: 3rem 4rem !important;
+}
+
+.user-form-dialog{
+  .k-overlay {
+    background-color: transparent;
+  }
+  // .k-window {
+  //   width: auto;
+  //   max-width: 50rem;
+  //   height: auto;
+  //   background-color: transparent;
+  //   box-shadow: none;
+  // }
+  // .k-window-content,
+  // .k-prompt-container {
+  //   border-style: solid;
+  //   border-width: 1px;
+  //   border-color: transparent;
+  //   padding: 3rem 4rem !important;
+  // }
+}
+
+.loader {
+  .k-overlay {
+    background-color: white;
+  }
+  .k-window {
+    width: auto;
+    max-width: 50rem;
+    height: auto;
+    background-color: transparent;
+    box-shadow: none;
+  }
+  .k-window-content,
+  .k-prompt-container {
+    border-style: solid;
+    border-width: 1px;
+    border-color: transparent;
+    padding: 3rem 4rem !important;
+  }
+}
+
+.k-colorpicker {
+  &.mandatory-field {
+    border-width: 1px !important;
+    border-color: red;
+  }
+}
+
+// for customize kendo dropdownlist
+.k-dropdownlist,
+.k-dropdownlist:hover,
+.k-dropdownlist:active {
+  border: 0;
+  background-color: white;
+  color: black;
+}
+
+// for customize editor
+.k-toolbar {
+  .k-icon-button {
+    color: white;
+  }
+}

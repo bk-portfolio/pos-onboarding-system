@@ -1,0 +1,108 @@
+trigger:
+  branches:
+    include:
+    - development
+    - main
+
+  # paths:
+  #   exclude:
+  #   - 'azure-pipelines.yml'     # Dont trigger when the build changes
+
+resources:
+- repo: self
+
+variables:
+  - name: doPublish
+    value: $[in(variables['Build.SourceBranchName'], 'development', 'main')]
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/development') }}:
+    - group: wooshfood-onboarding-development
+    - name: displayName
+      value: Development
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/staging') }}:
+    - group: wooshfood-onboarding-staging
+    - name: displayName
+      value: Staging
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+    - group: wooshfood-onboarding-production
+    - name: displayName
+      value: Production
+  - name: DOCKER_BUILDKIT
+    value: 1
+  - name: tag
+    value: '$(Build.BuildId)'
+
+pool:
+  vmImage: ubuntu-latest
+
+stages:
+
+- stage: BuildAndPushDockerImage
+  displayName: Build, Push and Deploy
+  jobs:
+  - job: BuildAndPushDocker
+    displayName: Build, Push and Deploy
+    steps:
+    - task: Bash@3
+      displayName: Build Docker Image
+      inputs:
+        targetType: 'inline'
+        script: |
+          # yarn install
+          # yarn build
+          docker build . -t $DOCKER_REGISTRY_HOST/$DOCKER_IMAGE_FRONTEND:${BUILD_SOURCEBRANCHNAME}-$(Build.BuildId) -t $DOCKER_REGISTRY_HOST/$DOCKER_IMAGE_FRONTEND:${BUILD_SOURCEBRANCHNAME}-latest -t $DOCKER_REGISTRY_HOST/$DOCKER_IMAGE_FRONTEND:$(Build.BuildId)
+
+    - task: Bash@3
+      displayName: Push Docker Image
+      condition: eq(variables['Build.SourceBranchName'], 'development')
+      inputs:
+        targetType: 'inline'
+        script: |
+          aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $DOCKER_REGISTRY_HOST
+          docker push $DOCKER_REGISTRY_HOST/$DOCKER_IMAGE_FRONTEND --all-tags
+
+    - task: Bash@3
+      displayName: Deploy to AWS ECS
+      condition: eq(variables['Build.SourceBranchName'], 'development')
+      inputs:
+        targetType: 'inline'
+        script: |
+
+          CONTAINER_IMAGE=$DOCKER_REGISTRY_HOST/$DOCKER_IMAGE_FRONTEND:${BUILD_SOURCEBRANCHNAME}-${BUILD_BUILDID}
+          echo "### Deploying: "$CONTAINER_IMAGE
+
+          echo "### aws ecs describe-task-definition ###"
+          TASK_DEFINITION=$(aws ecs describe-task-definition --task-definition $ECS_TASK_DEFINITION_FRONTEND)
+          echo $TASK_DEFINITION
+
+          echo "### preparing new task definition ###"
+          NEW_TASK_DEFINITION=$(echo $TASK_DEFINITION | jq --arg IMAGE "$CONTAINER_IMAGE" '.taskDefinition | .containerDefinitions[0].image = $IMAGE | del(.taskDefinitionArn) | del(.revision) | del(.status) | del(.requiresAttributes) | del(.compatibilities) | del(.registeredAt) | del(.registeredBy)')
+          echo $NEW_TASK_DEFINITION
+
+          echo "### ECS register-task-definition ###"
+          NEW_TASK_INFO=$(aws ecs register-task-definition --cli-input-json "$NEW_TASK_DEFINITION")
+
+          
+          PREVTASKDEF=$(aws ecs describe-services --cluster $ECS_CLUSTER_NAME --service $ECS_SERVICE_FRONTEND --query "services[].taskDefinition" --output text)
+          echo "### ECS update-service ###"
+          NEW_REVISION=$(echo $NEW_TASK_INFO | jq '.taskDefinition.revision')
+          aws ecs update-service --cluster $ECS_CLUSTER_NAME \
+                                --service $ECS_SERVICE_FRONTEND \
+                                --task-definition $ECS_TASK_DEFINITION_FRONTEND:${NEW_REVISION}
+
+          CURRENTTASKDEF=$(aws ecs describe-services --cluster $ECS_CLUSTER_NAME --service $ECS_SERVICE_FRONTEND --query "services[].taskDefinition" --output text)
+          echo $PREVTASKDEF " -> " $CURRENTTASKDEF
+
+    - task: Bash@3
+      displayName: 'Docker Save'
+      condition: eq(variables['Build.SourceBranchName'], 'main')
+      inputs:
+        targetType: 'inline'
+        script: |
+          docker image save $DOCKER_REGISTRY_HOST/$DOCKER_IMAGE_FRONTEND:$(Build.BuildId) -o $(Build.ArtifactStagingDirectory)/$(DOCKER_IMAGE_FRONTEND).tar
+
+    - task: PublishPipelineArtifact@1
+      condition: eq(variables['Build.SourceBranchName'], 'main')
+      inputs:
+        targetPath: '$(Pipeline.Workspace)'
+        artifact: $(DOCKER_IMAGE_FRONTEND)
+        publishLocation: 'pipeline'

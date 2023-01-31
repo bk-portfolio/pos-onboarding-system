@@ -1,0 +1,29 @@
+html {
+    font-family: "Poppins" !important;
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("./../fonts/Poppins/Poppins-Regular.ttf")
+    format("truetype");
+}
+
+@font-face {
+    font-family: "Poppins";
+    font-weight: bold;
+    src: url("./../fonts/Poppins/Poppins-SemiBold.ttf") format("truetype");
+}
+
+// @font-face {
+//     font-family: "Lato";
+//     font-style: italic;
+//     src: url("./../fonts/Lato/Lato-Italic.ttf") format("truetype");
+// }
+
+// @font-face {
+//     font-family: "Lato";
+//     font-weight: bold;
+//     font-style: italic;
+//     src: url("./../fonts/Lato/Lato-BoldItalic.ttf") format("truetype");
+// }
+

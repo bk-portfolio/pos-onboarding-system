@@ -1,0 +1,47 @@
+// This file use for Main Layout Style
+/*
+    * [Default] Layout
+    * This layot contains 2 things.
+    * ┌────────────┐┐
+    * │ NAV/HEADER │10% of screen
+    * ├────────────┤┤
+    * │   BODY     │90% of screen
+    * │            ││
+    * └────────────┘┘
+*/
+
+.layout {
+    height: 100%;
+    width: 100%;
+    background-color: $primary-bg-color;
+    position: fixed;
+    
+    &__main {
+        &--background {
+            background-image: url("./../img/registration.png");
+            /* Full height */
+            height: 100%;
+            /* Center and scale the image nicely */
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        &--navbar {
+            height: 10%;
+            color: white;
+            background-color: black;
+            display: flex;
+            align-items: center;
+            align-content: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        &--body {
+            height: 90%;
+            width: 100%;
+            // overflow-y: auto;
+        }
+    }
+}
+
+@import 'layout-admin';

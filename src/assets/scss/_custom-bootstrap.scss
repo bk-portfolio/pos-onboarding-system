@@ -1,0 +1,30 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/maps";
+@import "bootstrap/scss/mixins";
+@import "bootstrap/scss/utilities";
+
+// add new height value 10% and 90%
+$utilities: map-merge(
+    $utilities,
+    (
+      "height": (
+        property: height,
+        class: h,
+        values: (10: 10%, 90: 90%)
+      ),
+      "font-size": (
+        rfs: true,
+        property: font-size,
+        class: fs,
+        values: (7: $font-size-base * 0.8, 8: $font-size-base * 0.6)
+      )
+  )
+);
+
+.dropdown-menu {
+  width: max-content;
+}
+
+// @import "bootstrap";
+@import "bootstrap/scss/utilities/api";
